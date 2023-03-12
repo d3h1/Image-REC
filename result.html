@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clothing Recognition Results</title>
+</head>
+<body>
+    <h1>Clothing Recognition Results</h1>
+    <ul>
+    {% for label, prob in result %}
+        <li>{{ label }}: {{ prob }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
