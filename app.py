@@ -93,3 +93,7 @@ def predict():
         except Exception as e:
             return "Unable to read the file. Please check if the file extension is correct."
     return render_template('predict.html')
+
+if __name__ == "__main__":
+    init()
+    app.run()
