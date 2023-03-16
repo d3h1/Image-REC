@@ -3,16 +3,8 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from keras.models import load_model
+from keras.models import Sequential
 import os
-
-#
-# img = tf.keras.utils.load_img(
-#     'whiteTshirt.jpg',
-#     target_size=(300, 600),
-#     color_mode="grayscale"
-# )
-
-# img.show()
 
 # We have to first Flask Instance 
 app = Flask(__name__)
@@ -63,7 +55,7 @@ def predict():
                 
                 # We will now predict the class of an image
                 with graph.as_default():
-                    model1 = load_model('classification_model.h5')
+                    model1 = load_model('image_classification_model.h5')
                     class_prediction = model1.predict_classes(img)
                     print(class_prediction)
                     
