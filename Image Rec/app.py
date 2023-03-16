@@ -7,12 +7,11 @@ import os
 
 # Load the model outside the predict function
 model = load_model('clothing_classifier_model_v2.h5')
-model.graph = tf.compat.v1.get_default_graph()
 
 app = Flask(__name__)
 
 # We are setting max size of file as 10mb
-app.config['MAX CONTENT HEIGHT'] = 10 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 # This will allow files with extensions such as png, jpg, and jpeg
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
@@ -40,9 +39,9 @@ def predict():
                 img = np.expand_dims(img, axis=0)
                 img = np.expand_dims(img, axis=-1)
 
-                with model.graph.as_default():
-                    class_prediction = model.predict(img)
-                    predicted_label = int(np.argmax(class_prediction))
+                
+                class_prediction = model.predict(img)
+                predicted_label = int(np.argmax(class_prediction))
                     
                 # We will map apparel category with numerical classes
                 if predicted_label == 0:
@@ -76,7 +75,9 @@ def predict():
                 return f"File type not allowed: {file.filename}"
 
         except Exception as e:
-            return f"Error: {str(e)}"
+            print("Error:", str(e))
+            return jsonify({"error": str(e)}), 400
+
 
 
 
