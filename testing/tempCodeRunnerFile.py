@@ -1,1 +1,0 @@
-tf.get_default_graph()
