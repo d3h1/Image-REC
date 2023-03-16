@@ -1,16 +1,22 @@
+// This is ESSENTIAL in engaging our front end with the REST API | FLASK APP through HTTP requests
 import React, { useState } from "react";
 import config from "./config";
 
+// !Defining functional components
 const ImageUpload = () => {
+    // These useStates manage two states of the prediction and image
   const [prediction, setPrediction] = useState("");
   const [uploadedImage, setUploadedImage] = useState("");
 
+  // Triggered when the user submits an image through a form
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const fileInput = event.target.elements.file;
+    const fileInput = event.target.elements.file; 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
-
+    
+    // POST request sent to Flask API using fetch to pass in 'FormData'
+    // !STATUS 200-299 is successful upload
     try {
       const response = await fetch(`${config.API_BASE_URL}/predict`, {
         method: "POST",
@@ -31,6 +37,8 @@ const ImageUpload = () => {
     }
   };
 
+    
+  // We will soon be fetching color rec outputs into this same page   
   return (
     <div>
       <h1>Dress ME Up</h1>

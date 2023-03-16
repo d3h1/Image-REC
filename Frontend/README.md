@@ -5,11 +5,10 @@ In the frontend folder, you can run:
 
 ### `npm run start:both`
 
-Runs the application and backend server using concurrent.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Runs the application and backend server using concurrent.
+Open [http://localhost:3000] to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The page will reload when you make changes.
 
 
 ## External Python Installs Needed
