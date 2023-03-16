@@ -1,0 +1,15 @@
+.imageUpload {
+    border: 1px solid #000
+}
+
+#title {
+    color: red;
+}
+
+#file-submit {
+    color: green;
+}
+
+#file {
+    color: blue;
+}

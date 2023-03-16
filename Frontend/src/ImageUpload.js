@@ -1,6 +1,7 @@
 // This is ESSENTIAL in engaging our front end with the REST API | FLASK APP through HTTP requests
 import React, { useState } from "react";
 import config from "./config";
+import "./ImageUpload.css"
 
 // !Defining functional components
 const ImageUpload = () => {
@@ -40,13 +41,13 @@ const ImageUpload = () => {
     
   // We will soon be fetching color rec outputs into this same page   
   return (
-    <div>
-      <h1>Dress ME Up</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="imageUpload">
+      <h1 id="title">Dress ME Up</h1>
+      <form id="form-input" onSubmit={handleSubmit}>
         <input type="file" name="file" id="file" required />
-        <button type="submit">Predict</button>
+        <button id="imageSubmit" type="submit">Predict</button>
       </form>
-      <h2>{prediction}</h2>
+      <h2 id="title2">{prediction}</h2>
       {uploadedImage && <img src={uploadedImage} alt="Uploaded" />}
     </div>
   );
