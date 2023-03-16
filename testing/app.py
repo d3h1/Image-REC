@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request
-import pandas as pd
-import numpy as np
+from flask import Flask, request, render_template, jsonify
 import tensorflow as tf
+from PIL import Image
+import numpy as np
 from keras.models import load_model
-from keras.models import Sequential
 import os
 
-# We have to first Flask Instance 
+# Load the model outside the predict function
+model = load_model('clothing_classifier_model_v2.h5')
+model.graph = tf.compat.v1.get_default_graph()
+
 app = Flask(__name__)
 
 # We are setting max size of file as 10mb
@@ -17,10 +19,6 @@ ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 def allowed_files(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def init():
-    global graph
-    graph = tf.get_default_graph()
     
 # This will load and prepare the image to the right shape
 def read_image(filename):
@@ -42,7 +40,7 @@ def read_image(filename):
 def home():
         return render_template('home.html')
 
-@app.route("/predict", methods = ['GET', 'POST'])
+@app.route("/predict", methods=['GET', 'POST'])
 def predict():
     if request.method == 'POST':
         file = request.files['file']
@@ -51,41 +49,48 @@ def predict():
                 filename = file.filename
                 file_path = os.path.join('static/images', filename)
                 file.save(file_path)
-                img = read_image(file_path)
+                img = Image.open(file_path).convert('L')
+                img = img.resize((28, 28), Image.ANTIALIAS)
+                img = np.array(img)
+                img = (255 - img) / 255.0
+                img = np.expand_dims(img, axis=0)
+                img = np.expand_dims(img, axis=-1)
+
+                with model.graph.as_default():
+                    class_prediction = model.predict(img)
+                    predicted_label = int(np.argmax(class_prediction))
                 
-                # We will now predict the class of an image
-                with graph.as_default():
-                    model1 = load_model('image_classification_model.h5')
-                    class_prediction = model1.predict_classes(img)
-                    print(class_prediction)
-                    
                 # We will map apparel category with numerical classes
-                if class_prediction[0] == 0:
+                if predicted_label == 0:
                     product = "TShirt/top"
-                elif class_prediction[0] == 1:
+                elif predicted_label == 1:
                     product = "Trouser"
-                elif class_prediction[0] == 2:
+                elif predicted_label == 2:
                     product = "Pullover"
-                elif class_prediction[0] == 3:
+                elif predicted_label == 3:
                     product = "Dress"
-                elif class_prediction[0] == 4:
+                elif predicted_label == 4:
                     product = "Coat"
-                elif class_prediction[0] == 5:
+                elif predicted_label == 5:
                     product = "Sandal"
-                elif class_prediction[0] == 6:
+                elif predicted_label == 6:
                     product = "Shirt"
-                elif class_prediction[0] == 7:
+                elif predicted_label == 7:
                     product = "Sneaker"
-                elif class_prediction[0] == 8:
+                elif predicted_label == 8:
                     product = "Bag"
                 else:
                     product = "Ankle Boot"
-                return render_template('predict.html', product = product, user_image = file_path)
-            
+                return render_template('predict.html', product=product, user_image=file_path)
+                response = {
+                        "product": product,
+                        "user_image": file_path
+                    }
+                return jsonify(response)
+
         except Exception as e:
             return "Unable to read the file. Please check if the file extension is correct."
     return render_template('predict.html')
 
 if __name__ == "__main__":
-    init()
     app.run()
